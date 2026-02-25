@@ -6,8 +6,8 @@ github.com/ProtonMail/go-crypto v1.1.6 h1:ZcV+Ropw6Qn0AX9brlQLAUXfqLBc7Bl+f/DmNx
 github.com/ProtonMail/go-crypto v1.1.6/go.mod h1:rA3QumHc/FZ8pAHreoekgiAbzpNsfQAosU5td4SnOrE=
 github.com/agext/levenshtein v1.2.2 h1:0S/Yg6LYmFJ5stwQeRp6EeOcCbj7xiqQSdNelsXvaqE=
 github.com/agext/levenshtein v1.2.2/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
-github.com/amreshh/go-github/v83 v83.0.0-20260225104241-c90394745f32 h1:9Fz0uWNBqZNA4W5rKF+Fh1nmhEjmIBQRF2Dh7gfRB1w=
-github.com/amreshh/go-github/v83 v83.0.0-20260225104241-c90394745f32/go.mod h1:M1PBnY3pmDTomoNcWhuwLupT2qlcPkCkRKgzhSz5fus=
+github.com/amreshh/go-github/v83 v83.0.0-20260225151133-02ccfd0445f6 h1:RILiKtjX8ZdkxJzQzQsEhaxvzEbIT+E9A3U4L7eBDDU=
+github.com/amreshh/go-github/v83 v83.0.0-20260225151133-02ccfd0445f6/go.mod h1:M1PBnY3pmDTomoNcWhuwLupT2qlcPkCkRKgzhSz5fus=
 github.com/apparentlymart/go-textseg/v12 v12.0.0/go.mod h1:S/4uRK2UtaQttw1GenVJEynmyUenKwP++x/+DdGV/Ec=
 github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
 github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=

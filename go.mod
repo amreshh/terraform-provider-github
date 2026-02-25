@@ -68,4 +68,4 @@ require (
 	google.golang.org/protobuf v1.36.9 // indirect
 )
 
-replace github.com/google/go-github/v83 => github.com/amreshh/go-github/v83 v83.0.0-20260225104241-c90394745f32
+replace github.com/google/go-github/v83 => github.com/amreshh/go-github/v83 v83.0.0-20260225151133-02ccfd0445f6
