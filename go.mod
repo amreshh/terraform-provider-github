@@ -1,10 +1,11 @@
 module github.com/integrations/terraform-provider-github/v6
 
-go 1.24.4
+go 1.25.0
 
 require (
 	github.com/go-jose/go-jose/v3 v3.0.4
 	github.com/google/go-github/v83 v83.0.0
+	github.com/google/go-github/v84 v84.0.0-00010101000000-000000000000
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-cty v1.5.0
 	github.com/hashicorp/terraform-plugin-log v0.10.0
@@ -67,3 +68,5 @@ require (
 	google.golang.org/grpc v1.75.1 // indirect
 	google.golang.org/protobuf v1.36.9 // indirect
 )
+
+replace github.com/google/go-github/v84 => github.com/amreshh/go-github/v84 v84.0.0-20260303073639-aeccd1d0807b
