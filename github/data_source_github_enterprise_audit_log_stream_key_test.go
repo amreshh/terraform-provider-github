@@ -8,6 +8,8 @@ import (
 )
 
 func TestAccGithubEnterpriseAuditLogStreamKey(t *testing.T) {
+	t.Parallel()
+
 	enterpriseSlug := testAccConf.enterpriseSlug
 	if enterpriseSlug == "" {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
@@ -22,7 +24,7 @@ func TestAccGithubEnterpriseAuditLogStreamKey(t *testing.T) {
 			{
 				Config: testAccGithubEnterpriseAuditLogStreamKeyConfig(enterpriseSlug),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "slug", enterpriseSlug),
 					resource.TestCheckResourceAttrSet(resourceName, "key_id"),
 					resource.TestCheckResourceAttrSet(resourceName, "key"),
 				),
@@ -34,7 +36,7 @@ func TestAccGithubEnterpriseAuditLogStreamKey(t *testing.T) {
 func testAccGithubEnterpriseAuditLogStreamKeyConfig(enterpriseSlug string) string {
 	return fmt.Sprintf(`
 		data "github_enterprise_audit_log_stream_key" "test" {
-			enterprise = "%s"
+			slug = "%s"
 		}
 	`, enterpriseSlug)
 }
