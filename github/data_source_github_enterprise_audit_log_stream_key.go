@@ -11,7 +11,7 @@ func dataSourceGithubEnterpriseAuditLogStreamKey() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceGithubEnterpriseAuditLogStreamKeyRead,
 		Schema: map[string]*schema.Schema{
-			"enterprise": {
+			"slug": {
 				Type:        schema.TypeString,
 				Required:    true,
 				Description: "The slug of the enterprise.",
@@ -19,12 +19,12 @@ func dataSourceGithubEnterpriseAuditLogStreamKey() *schema.Resource {
 			"key_id": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The ID of the public key.",
+				Description: "Audit Log Streaming Public Key ID.",
 			},
 			"key": {
 				Type:        schema.TypeString,
 				Computed:    true,
-				Description: "The public key.",
+				Description: "Audit Log Streaming Public Key.",
 			},
 		},
 	}
@@ -32,14 +32,14 @@ func dataSourceGithubEnterpriseAuditLogStreamKey() *schema.Resource {
 
 func dataSourceGithubEnterpriseAuditLogStreamKeyRead(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Owner).v3clientV84
-	enterprise := d.Get("enterprise").(string)
+	slug := d.Get("slug").(string)
 
-	key, _, err := client.Enterprise.GetAuditLogStreamKey(ctx, enterprise)
+	key, _, err := client.Enterprise.GetAuditLogStreamKey(ctx, slug)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 
-	d.SetId(enterprise)
+	d.SetId(slug)
 	if err := d.Set("key_id", key.KeyID); err != nil {
 		return diag.FromErr(err)
 	}

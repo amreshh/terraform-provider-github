@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/go-github/v83/github"
+	githubv84 "github.com/google/go-github/v84/github"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -33,6 +34,7 @@ type Owner struct {
 	name           string
 	id             int64
 	v3client       *github.Client
+	v3clientV84    *githubv84.Client
 	v4client       *githubv4.Client
 	StopContext    context.Context
 	IsOrganization bool
@@ -114,6 +116,18 @@ func (c *Config) NewRESTClient(client *http.Client) (*github.Client, error) {
 	return v3client, nil
 }
 
+func (c *Config) NewRESTClientV84(client *http.Client) (*githubv84.Client, error) {
+	path := ""
+	if c.IsGHES {
+		path = GHESRESTAPIPath
+	}
+
+	v84client := githubv84.NewClient(client)
+	v84client.BaseURL = c.BaseURL.JoinPath(path)
+
+	return v84client, nil
+}
+
 func (c *Config) ConfigureOwner(owner *Owner) (*Owner, error) {
 	ctx := context.Background()
 	owner.name = c.Owner
@@ -155,6 +169,11 @@ func (c *Config) Meta() (any, error) {
 		return nil, err
 	}
 
+	v3clientV84, err := c.NewRESTClientV84(client)
+	if err != nil {
+		return nil, err
+	}
+
 	v4client, err := c.NewGraphQLClient(client)
 	if err != nil {
 		return nil, err
@@ -163,6 +182,7 @@ func (c *Config) Meta() (any, error) {
 	var owner Owner
 	owner.v4client = v4client
 	owner.v3client = v3client
+	owner.v3clientV84 = v3clientV84
 	owner.StopContext = context.Background()
 
 	_, err = c.ConfigureOwner(&owner)

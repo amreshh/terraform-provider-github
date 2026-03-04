@@ -2,11 +2,13 @@ package github
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"testing"
 
+	"github.com/google/go-github/v84/github"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 )
@@ -38,7 +40,7 @@ func TestAccGithubEnterpriseAuditLogStream_azureBlob(t *testing.T) {
 			{
 				Config: testAccGithubEnterpriseAuditLogStreamAzureBlobConfig(enterpriseSlug, container, keyID, encryptedSasURL, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "azure_blob_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "azure_blob_config.0.container", container),
@@ -64,7 +66,7 @@ func TestAccGithubEnterpriseAuditLogStream_azureBlob(t *testing.T) {
 			{
 				Config: testAccGithubEnterpriseAuditLogStreamAzureBlobConfig(enterpriseSlug, container, keyID, encryptedSasURL, false),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
 					resource.TestCheckResourceAttr(resourceName, "azure_blob_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "azure_blob_config.0.container", container),
@@ -143,7 +145,7 @@ func TestAccGithubEnterpriseAuditLogStream_azureHub(t *testing.T) {
 			{
 				Config: testAccGithubEnterpriseAuditLogStreamAzureHubConfig(enterpriseSlug, name, keyID, encryptedConnstring, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "azure_hub_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "azure_hub_config.0.name", name),
@@ -163,6 +165,20 @@ func TestAccGithubEnterpriseAuditLogStream_azureHub(t *testing.T) {
 					"azure_hub_config.0.key_id",
 					"azure_hub_config.0.encrypted_connstring",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamAzureHubConfig(enterpriseSlug, name, keyID, encryptedConnstring, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamAzureHubConfig(enterpriseSlug, name, keyID, encryptedConnstring, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -195,7 +211,7 @@ func TestAccGithubEnterpriseAuditLogStream_amazonS3OIDC(t *testing.T) {
 			{
 				Config: testAccGithubEnterpriseAuditLogStreamAmazonS3OIDCConfig(enterpriseSlug, bucket, region, keyID, arnRole, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "amazon_s3_oidc_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "amazon_s3_oidc_config.0.bucket", bucket),
@@ -217,6 +233,20 @@ func TestAccGithubEnterpriseAuditLogStream_amazonS3OIDC(t *testing.T) {
 					"amazon_s3_oidc_config.0.key_id",
 					"amazon_s3_oidc_config.0.arn_role",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamAmazonS3OIDCConfig(enterpriseSlug, bucket, region, keyID, arnRole, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamAmazonS3OIDCConfig(enterpriseSlug, bucket, region, keyID, arnRole, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -252,7 +282,7 @@ func TestAccGithubEnterpriseAuditLogStream_amazonS3AccessKeys(t *testing.T) {
 				Config: testAccGithubEnterpriseAuditLogStreamAmazonS3AccessKeysConfig(
 					enterpriseSlug, bucket, region, keyID, encryptedSecretKey, encryptedAccessKeyID, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "amazon_s3_access_keys_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "amazon_s3_access_keys_config.0.bucket", bucket),
@@ -276,6 +306,22 @@ func TestAccGithubEnterpriseAuditLogStream_amazonS3AccessKeys(t *testing.T) {
 					"amazon_s3_access_keys_config.0.encrypted_secret_key",
 					"amazon_s3_access_keys_config.0.encrypted_access_key_id",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamAmazonS3AccessKeysConfig(
+					enterpriseSlug, bucket, region, keyID, encryptedSecretKey, encryptedAccessKeyID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamAmazonS3AccessKeysConfig(
+					enterpriseSlug, bucket, region, keyID, encryptedSecretKey, encryptedAccessKeyID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -311,7 +357,7 @@ func TestAccGithubEnterpriseAuditLogStream_splunk(t *testing.T) {
 				Config: testAccGithubEnterpriseAuditLogStreamSplunkConfig(
 					enterpriseSlug, domain, port, keyID, encryptedToken, sslVerify, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "splunk_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "splunk_config.0.domain", domain),
@@ -335,6 +381,22 @@ func TestAccGithubEnterpriseAuditLogStream_splunk(t *testing.T) {
 					"splunk_config.0.encrypted_token",
 					"splunk_config.0.ssl_verify",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamSplunkConfig(
+					enterpriseSlug, domain, port, keyID, encryptedToken, sslVerify, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamSplunkConfig(
+					enterpriseSlug, domain, port, keyID, encryptedToken, sslVerify, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -371,7 +433,7 @@ func TestAccGithubEnterpriseAuditLogStream_hec(t *testing.T) {
 				Config: testAccGithubEnterpriseAuditLogStreamHecConfig(
 					enterpriseSlug, domain, port, keyID, encryptedToken, path, sslVerify, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "hec_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "hec_config.0.domain", domain),
@@ -397,6 +459,22 @@ func TestAccGithubEnterpriseAuditLogStream_hec(t *testing.T) {
 					"hec_config.0.path",
 					"hec_config.0.ssl_verify",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamHecConfig(
+					enterpriseSlug, domain, port, keyID, encryptedToken, path, sslVerify, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamHecConfig(
+					enterpriseSlug, domain, port, keyID, encryptedToken, path, sslVerify, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -429,7 +507,7 @@ func TestAccGithubEnterpriseAuditLogStream_googleCloud(t *testing.T) {
 				Config: testAccGithubEnterpriseAuditLogStreamGoogleCloudConfig(
 					enterpriseSlug, bucket, keyID, encryptedJSONCreds, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "google_cloud_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "google_cloud_config.0.bucket", bucket),
@@ -449,6 +527,22 @@ func TestAccGithubEnterpriseAuditLogStream_googleCloud(t *testing.T) {
 					"google_cloud_config.0.key_id",
 					"google_cloud_config.0.encrypted_json_credentials",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamGoogleCloudConfig(
+					enterpriseSlug, bucket, keyID, encryptedJSONCreds, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamGoogleCloudConfig(
+					enterpriseSlug, bucket, keyID, encryptedJSONCreds, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -481,7 +575,7 @@ func TestAccGithubEnterpriseAuditLogStream_datadog(t *testing.T) {
 				Config: testAccGithubEnterpriseAuditLogStreamDatadogConfig(
 					enterpriseSlug, encryptedToken, site, keyID, true),
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr(resourceName, "enterprise", enterpriseSlug),
+					resource.TestCheckResourceAttr(resourceName, "enterprise_slug", enterpriseSlug),
 					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
 					resource.TestCheckResourceAttr(resourceName, "datadog_config.#", "1"),
 					resource.TestCheckResourceAttr(resourceName, "datadog_config.0.encrypted_token", encryptedToken),
@@ -501,6 +595,22 @@ func TestAccGithubEnterpriseAuditLogStream_datadog(t *testing.T) {
 					"datadog_config.0.site",
 					"datadog_config.0.key_id",
 				},
+			},
+			// Step 3: Update — disable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamDatadogConfig(
+					enterpriseSlug, encryptedToken, site, keyID, false),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "false"),
+				),
+			},
+			// Step 4: Update — re-enable the stream
+			{
+				Config: testAccGithubEnterpriseAuditLogStreamDatadogConfig(
+					enterpriseSlug, encryptedToken, site, keyID, true),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(resourceName, "enabled", "true"),
+				),
 			},
 		},
 	})
@@ -527,6 +637,11 @@ func testAccCheckGithubEnterpriseAuditLogStreamDestroy(s *terraform.State) error
 		if err == nil {
 			return fmt.Errorf("audit log stream %d still exists in enterprise %s", streamID, enterprise)
 		}
+
+		var ghErr *github.ErrorResponse
+		if !errors.As(err, &ghErr) || ghErr.Response.StatusCode != 404 {
+			return fmt.Errorf("unexpected error checking audit log stream %d: %w", streamID, err)
+		}
 	}
 
 	return nil
@@ -537,7 +652,7 @@ func testAccCheckGithubEnterpriseAuditLogStreamDestroy(s *terraform.State) error
 func testAccGithubEnterpriseAuditLogStreamAzureBlobConfig(enterpriseSlug, container, keyID, encryptedSasURL string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   azure_blob_config {
@@ -552,7 +667,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamAzureBlobConfigNoEnabled(enterpriseSlug, container, keyID, encryptedSasURL string) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
 
   azure_blob_config {
     container         = "%s"
@@ -566,7 +681,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamAzureHubConfig(enterpriseSlug, name, keyID, encryptedConnstring string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   azure_hub_config {
@@ -581,7 +696,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamAmazonS3OIDCConfig(enterpriseSlug, bucket, region, keyID, arnRole string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   amazon_s3_oidc_config {
@@ -597,7 +712,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamAmazonS3AccessKeysConfig(enterpriseSlug, bucket, region, keyID, encryptedSecretKey, encryptedAccessKeyID string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   amazon_s3_access_keys_config {
@@ -614,7 +729,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamSplunkConfig(enterpriseSlug, domain, port, keyID, encryptedToken, sslVerify string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   splunk_config {
@@ -631,7 +746,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamHecConfig(enterpriseSlug, domain, port, keyID, encryptedToken, path, sslVerify string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   hec_config {
@@ -649,7 +764,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamGoogleCloudConfig(enterpriseSlug, bucket, keyID, encryptedJSONCredentials string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   google_cloud_config {
@@ -664,7 +779,7 @@ resource "github_enterprise_audit_log_stream" "test" {
 func testAccGithubEnterpriseAuditLogStreamDatadogConfig(enterpriseSlug, encryptedToken, site, keyID string, enabled bool) string {
 	return fmt.Sprintf(`
 resource "github_enterprise_audit_log_stream" "test" {
-  enterprise = "%s"
+  enterprise_slug = "%s"
   enabled    = %s
 
   datadog_config {

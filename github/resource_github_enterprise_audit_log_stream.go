@@ -33,7 +33,7 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 		Schema: map[string]*schema.Schema{
-			"enterprise": {
+			"enterprise_slug": {
 				Type:        schema.TypeString,
 				Required:    true,
 				ForceNew:    true,
@@ -51,11 +51,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				Description: "The ID of the audit log stream.",
 			},
 			"azure_blob_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for an Azure Blob Storage audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for an Azure Blob Storage audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"key_id": {
@@ -78,11 +78,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"azure_hub_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for an Azure Event Hubs audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for an Azure Event Hubs audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -105,11 +105,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"amazon_s3_oidc_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for an Amazon S3 (OIDC) audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for an Amazon S3 (OIDC) audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bucket": {
@@ -136,11 +136,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"amazon_s3_access_keys_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for an Amazon S3 (access keys) audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for an Amazon S3 (access keys) audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bucket": {
@@ -174,11 +174,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"splunk_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for a Splunk audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for a Splunk audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"domain": {
@@ -211,11 +211,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"hec_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for an HTTPS Event Collector audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for an HTTPS Event Collector audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"domain": {
@@ -253,11 +253,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"google_cloud_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for a Google Cloud Storage audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for a Google Cloud Storage audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bucket": {
@@ -280,11 +280,11 @@ func resourceGithubEnterpriseAuditLogStream() *schema.Resource {
 				},
 			},
 			"datadog_config": {
-				Type:          schema.TypeList,
-				Optional:      true,
-				MaxItems:      1,
-				ExactlyOneOf:  vendorConfigKeys,
-				Description:   "The configuration for a Datadog audit log stream.",
+				Type:         schema.TypeList,
+				Optional:     true,
+				MaxItems:     1,
+				ExactlyOneOf: vendorConfigKeys,
+				Description:  "The configuration for a Datadog audit log stream.",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"encrypted_token": {
@@ -479,7 +479,7 @@ func expandVendorConfig(d *schema.ResourceData, enabled bool) *github.AuditLogSt
 
 func resourceGithubEnterpriseAuditLogStreamCreate(ctx context.Context, d *schema.ResourceData, meta any) diag.Diagnostics {
 	client := meta.(*Owner).v3clientV84
-	enterprise := d.Get("enterprise").(string)
+	enterprise := d.Get("enterprise_slug").(string)
 	enabled := d.Get("enabled").(bool)
 
 	config := expandVendorConfig(d, enabled)
@@ -516,7 +516,7 @@ func resourceGithubEnterpriseAuditLogStreamRead(ctx context.Context, d *schema.R
 		return diag.FromErr(err)
 	}
 
-	if err := d.Set("enterprise", enterprise); err != nil {
+	if err := d.Set("enterprise_slug", enterprise); err != nil {
 		return diag.FromErr(err)
 	}
 	if err := d.Set("enabled", stream.Enabled); err != nil {
