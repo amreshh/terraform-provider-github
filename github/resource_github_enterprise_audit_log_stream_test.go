@@ -21,12 +21,16 @@ func TestAccGithubEnterpriseAuditLogStream_azureBlob(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	container := os.Getenv("GITHUB_AZURE_BLOB_CONTAINER")
-	keyID := os.Getenv("GITHUB_AZURE_BLOB_KEY_ID")
-	encryptedSasURL := os.Getenv("GITHUB_AZURE_BLOB_SAS_URL")
-	if container == "" || keyID == "" || encryptedSasURL == "" {
+	encryptedSasURL := os.Getenv("GITHUB_AZURE_BLOB_ENCRYPTED_SAS_URL")
+	if container == "" || encryptedSasURL == "" {
 		t.Skip("Skipping because one or more Azure Blob env vars are not set " +
-			"(GITHUB_AZURE_BLOB_CONTAINER, GITHUB_AZURE_BLOB_KEY_ID, GITHUB_AZURE_BLOB_SAS_URL)")
+			"(GITHUB_AZURE_BLOB_CONTAINER, GITHUB_AZURE_BLOB_ENCRYPTED_SAS_URL)")
 	}
 
 	resourceName := "github_enterprise_audit_log_stream.test"
@@ -92,12 +96,16 @@ func TestAccGithubEnterpriseAuditLogStream_enabledDefault(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	container := os.Getenv("GITHUB_AZURE_BLOB_CONTAINER")
-	keyID := os.Getenv("GITHUB_AZURE_BLOB_KEY_ID")
-	encryptedSasURL := os.Getenv("GITHUB_AZURE_BLOB_SAS_URL")
-	if container == "" || keyID == "" || encryptedSasURL == "" {
+	encryptedSasURL := os.Getenv("GITHUB_AZURE_BLOB_ENCRYPTED_SAS_URL")
+	if container == "" || encryptedSasURL == "" {
 		t.Skip("Skipping because one or more Azure Blob env vars are not set " +
-			"(GITHUB_AZURE_BLOB_CONTAINER, GITHUB_AZURE_BLOB_KEY_ID, GITHUB_AZURE_BLOB_SAS_URL)")
+			"(GITHUB_AZURE_BLOB_CONTAINER, GITHUB_AZURE_BLOB_ENCRYPTED_SAS_URL)")
 	}
 
 	resourceName := "github_enterprise_audit_log_stream.test"
@@ -127,12 +135,16 @@ func TestAccGithubEnterpriseAuditLogStream_azureHub(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	name := os.Getenv("GITHUB_AZURE_HUB_NAME")
-	keyID := os.Getenv("GITHUB_AZURE_HUB_KEY_ID")
 	encryptedConnstring := os.Getenv("GITHUB_AZURE_HUB_ENCRYPTED_CONNSTRING")
-	if name == "" || keyID == "" || encryptedConnstring == "" {
+	if name == "" || encryptedConnstring == "" {
 		t.Skip("Skipping because one or more Azure Hub env vars are not set " +
-			"(GITHUB_AZURE_HUB_NAME, GITHUB_AZURE_HUB_KEY_ID, GITHUB_AZURE_HUB_ENCRYPTED_CONNSTRING)")
+			"(GITHUB_AZURE_HUB_NAME, GITHUB_AZURE_HUB_ENCRYPTED_CONNSTRING)")
 	}
 
 	resourceName := "github_enterprise_audit_log_stream.test"
@@ -192,13 +204,17 @@ func TestAccGithubEnterpriseAuditLogStream_amazonS3OIDC(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	bucket := os.Getenv("GITHUB_S3_OIDC_BUCKET")
 	region := os.Getenv("GITHUB_S3_OIDC_REGION")
-	keyID := os.Getenv("GITHUB_S3_OIDC_KEY_ID")
 	arnRole := os.Getenv("GITHUB_S3_OIDC_ARN_ROLE")
-	if bucket == "" || region == "" || keyID == "" || arnRole == "" {
+	if bucket == "" || region == "" || arnRole == "" {
 		t.Skip("Skipping because one or more S3 OIDC env vars are not set " +
-			"(GITHUB_S3_OIDC_BUCKET, GITHUB_S3_OIDC_REGION, GITHUB_S3_OIDC_KEY_ID, GITHUB_S3_OIDC_ARN_ROLE)")
+			"(GITHUB_S3_OIDC_BUCKET, GITHUB_S3_OIDC_REGION, GITHUB_S3_OIDC_ARN_ROLE)")
 	}
 
 	resourceName := "github_enterprise_audit_log_stream.test"
@@ -260,14 +276,18 @@ func TestAccGithubEnterpriseAuditLogStream_amazonS3AccessKeys(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	bucket := os.Getenv("GITHUB_S3_ACCESS_KEYS_BUCKET")
 	region := os.Getenv("GITHUB_S3_ACCESS_KEYS_REGION")
-	keyID := os.Getenv("GITHUB_S3_ACCESS_KEYS_KEY_ID")
 	encryptedSecretKey := os.Getenv("GITHUB_S3_ACCESS_KEYS_ENCRYPTED_SECRET_KEY")
 	encryptedAccessKeyID := os.Getenv("GITHUB_S3_ACCESS_KEYS_ENCRYPTED_ACCESS_KEY_ID")
-	if bucket == "" || region == "" || keyID == "" || encryptedSecretKey == "" || encryptedAccessKeyID == "" {
+	if bucket == "" || region == "" || encryptedSecretKey == "" || encryptedAccessKeyID == "" {
 		t.Skip("Skipping because one or more S3 Access Keys env vars are not set " +
-			"(GITHUB_S3_ACCESS_KEYS_BUCKET, GITHUB_S3_ACCESS_KEYS_REGION, GITHUB_S3_ACCESS_KEYS_KEY_ID, " +
+			"(GITHUB_S3_ACCESS_KEYS_BUCKET, GITHUB_S3_ACCESS_KEYS_REGION, " +
 			"GITHUB_S3_ACCESS_KEYS_ENCRYPTED_SECRET_KEY, GITHUB_S3_ACCESS_KEYS_ENCRYPTED_ACCESS_KEY_ID)")
 	}
 
@@ -335,14 +355,18 @@ func TestAccGithubEnterpriseAuditLogStream_splunk(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	domain := os.Getenv("GITHUB_SPLUNK_DOMAIN")
 	port := os.Getenv("GITHUB_SPLUNK_PORT")
-	keyID := os.Getenv("GITHUB_SPLUNK_KEY_ID")
 	encryptedToken := os.Getenv("GITHUB_SPLUNK_ENCRYPTED_TOKEN")
 	sslVerify := os.Getenv("GITHUB_SPLUNK_SSL_VERIFY")
-	if domain == "" || port == "" || keyID == "" || encryptedToken == "" || sslVerify == "" {
+	if domain == "" || port == "" || encryptedToken == "" || sslVerify == "" {
 		t.Skip("Skipping because one or more Splunk env vars are not set " +
-			"(GITHUB_SPLUNK_DOMAIN, GITHUB_SPLUNK_PORT, GITHUB_SPLUNK_KEY_ID, " +
+			"(GITHUB_SPLUNK_DOMAIN, GITHUB_SPLUNK_PORT, " +
 			"GITHUB_SPLUNK_ENCRYPTED_TOKEN, GITHUB_SPLUNK_SSL_VERIFY)")
 	}
 
@@ -410,15 +434,19 @@ func TestAccGithubEnterpriseAuditLogStream_hec(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	domain := os.Getenv("GITHUB_HEC_DOMAIN")
 	port := os.Getenv("GITHUB_HEC_PORT")
-	keyID := os.Getenv("GITHUB_HEC_KEY_ID")
 	encryptedToken := os.Getenv("GITHUB_HEC_ENCRYPTED_TOKEN")
 	path := os.Getenv("GITHUB_HEC_PATH")
 	sslVerify := os.Getenv("GITHUB_HEC_SSL_VERIFY")
-	if domain == "" || port == "" || keyID == "" || encryptedToken == "" || path == "" || sslVerify == "" {
+	if domain == "" || port == "" || encryptedToken == "" || path == "" || sslVerify == "" {
 		t.Skip("Skipping because one or more HEC env vars are not set " +
-			"(GITHUB_HEC_DOMAIN, GITHUB_HEC_PORT, GITHUB_HEC_KEY_ID, " +
+			"(GITHUB_HEC_DOMAIN, GITHUB_HEC_PORT, " +
 			"GITHUB_HEC_ENCRYPTED_TOKEN, GITHUB_HEC_PATH, GITHUB_HEC_SSL_VERIFY)")
 	}
 
@@ -488,12 +516,16 @@ func TestAccGithubEnterpriseAuditLogStream_googleCloud(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	bucket := os.Getenv("GITHUB_GOOGLE_CLOUD_BUCKET")
-	keyID := os.Getenv("GITHUB_GOOGLE_CLOUD_KEY_ID")
 	encryptedJSONCreds := os.Getenv("GITHUB_GOOGLE_CLOUD_ENCRYPTED_JSON_CREDENTIALS")
-	if bucket == "" || keyID == "" || encryptedJSONCreds == "" {
+	if bucket == "" || encryptedJSONCreds == "" {
 		t.Skip("Skipping because one or more Google Cloud env vars are not set " +
-			"(GITHUB_GOOGLE_CLOUD_BUCKET, GITHUB_GOOGLE_CLOUD_KEY_ID, GITHUB_GOOGLE_CLOUD_ENCRYPTED_JSON_CREDENTIALS)")
+			"(GITHUB_GOOGLE_CLOUD_BUCKET, GITHUB_GOOGLE_CLOUD_ENCRYPTED_JSON_CREDENTIALS)")
 	}
 
 	resourceName := "github_enterprise_audit_log_stream.test"
@@ -556,12 +588,16 @@ func TestAccGithubEnterpriseAuditLogStream_datadog(t *testing.T) {
 		t.Skip("Skipping because GITHUB_ENTERPRISE_SLUG is not set")
 	}
 
+	keyID := os.Getenv("GITHUB_AUDIT_LOG_STREAM_KEY_ID")
+	if keyID == "" {
+		t.Skip("Skipping because GITHUB_AUDIT_LOG_STREAM_KEY_ID is not set")
+	}
+
 	encryptedToken := os.Getenv("GITHUB_DATADOG_ENCRYPTED_TOKEN")
 	site := os.Getenv("GITHUB_DATADOG_SITE")
-	keyID := os.Getenv("GITHUB_DATADOG_KEY_ID")
-	if encryptedToken == "" || site == "" || keyID == "" {
+	if encryptedToken == "" || site == "" {
 		t.Skip("Skipping because one or more Datadog env vars are not set " +
-			"(GITHUB_DATADOG_ENCRYPTED_TOKEN, GITHUB_DATADOG_SITE, GITHUB_DATADOG_KEY_ID)")
+			"(GITHUB_DATADOG_ENCRYPTED_TOKEN, GITHUB_DATADOG_SITE)")
 	}
 
 	resourceName := "github_enterprise_audit_log_stream.test"
